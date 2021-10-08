@@ -52,7 +52,7 @@ ingress:
   enabled: true
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    #nginx.ingress.kubernetes.io/affinity: "cookie" <-- 
+    #nginx.ingress.kubernetes.io/affinity: "cookie" <-- if commented, the app will throw an errors on retry when switching between the replicas
   hosts:
     - host: pizza-express.vnox.local
       paths:

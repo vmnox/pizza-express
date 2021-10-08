@@ -54,7 +54,7 @@
 - name: "Push Application with latest tag: {{app_image}}:latest (build)"
   docker_image:
     name: "{{app_image}}:{{app_tag}}"
-    tag: latest
+    repository: "{{app_image}}:latest"
     push: yes
     source: local
 ...

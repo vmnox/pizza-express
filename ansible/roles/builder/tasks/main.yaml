@@ -26,20 +26,20 @@
     verbosity: 2
 
     
-- name: Build Application container
+- name: "Build Application container: {{app_image}}:{{app_tag}}"
   docker_image:
     build:
       path: "{{app_dir}}"
       pull: no
-    name: "vnox91/pizza-express"
-    tag: v0.0.1  
+    name: "{{app_image}}"
+    tag: "{{app_tag}}"  
     source: build
 
   
-- name: "Starting Application container (tests)"
+- name: "Starting Application container (tests): {{app_image}}:{{app_tag}}"
   docker_container:
     name: pizza-express-fronted
-    image: vnox91/pizza-express:latest
+    image: "{{app_image}}:{{app_tag}}"
     detach: yes
     network_mode: host
 
@@ -58,9 +58,9 @@
     - pizza-express-backend
 
 
-- name: Push Application with latest tag
+- name: "Push Application with latest tag: {{app_image}}:latest"
   docker_image:
-    name: "vnox91/pizza-express:v0.0.1"
+    name: "{{app_image}}:{{app_tag}}"
     tag: latest
     push: yes
     source: local

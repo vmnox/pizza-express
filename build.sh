@@ -11,6 +11,13 @@ set -xeof pipefail
 # 3) password-less authentication with the builder host (localhost)
 # 4) runtime user needs to be in a docker group
 
+# For Pizza-express Chart deployment:
+# export DOMAIN=[...]
+# export PIZZA_IMAGE="${REGISTRY_URL}/pizza-express"
+# helm install pizza-express ./Charts/pizza-express \
+#    --set image.repository="${PIZZA_IMAGE}" \
+#    --set "ingress.hosts[0].host=${DOMAIN},ingress.hosts[0].paths[0].path=/"
+
 BASEDIR="$(readlink -f $(dirname $0))"
 REGISTRY_URL="${REGISTRY_URL:-vnox91}"
 APP_NAME="pizza-express"

@@ -1,0 +1,6 @@
+---
+- hosts: localhost
+  force_handlers: true
+  roles:
+  - builder
+...

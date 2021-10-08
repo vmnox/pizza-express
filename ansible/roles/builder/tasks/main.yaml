@@ -1,0 +1,67 @@
+---
+- name: "Starting Redis container (tests)"
+  docker_container:
+    name: pizza-express-backend
+    image: redis:latest
+    detach: yes
+    ports:
+      - '127.0.0.1:6379:6379'
+
+
+- name: Run NPM install
+  command: "docker run --interactive --rm --volume {{app_dir}}:/pwd --workdir /pwd node:8.4.0 npm install"
+  register: _npm_install
+
+- debug:
+    msg: "{{_npm_install}}"
+    verbosity: 2
+  
+
+- name: Run Application tests
+  command: "docker run --interactive --network host --rm --volume {{app_dir}}:/pwd --workdir /pwd node:8.4.0 npm test"
+  register: _npm_install
+
+- debug:
+    msg: "{{_npm_install}}"
+    verbosity: 2
+
+    
+- name: Build Application container
+  docker_image:
+    build:
+      path: "{{app_dir}}"
+      pull: no
+    name: "vnox91/pizza-express"
+    tag: v0.0.1  
+    source: build
+
+  
+- name: "Starting Application container (tests)"
+  docker_container:
+    name: pizza-express-fronted
+    image: vnox91/pizza-express:latest
+    detach: yes
+    network_mode: host
+
+
+- name: Verify service code 200
+  uri:
+    url: "http://localhost:8081"
+
+
+- name: Cleanup Fronted and Backend containers
+  docker_container:
+    name: "{{item}}"
+    state: absent
+  with_items:
+    - pizza-express-fronted
+    - pizza-express-backend
+
+
+- name: Push Application with latest tag
+  docker_image:
+    name: "vnox91/pizza-express:v0.0.1"
+    tag: latest
+    push: yes
+    source: local
+...

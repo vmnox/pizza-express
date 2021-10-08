@@ -1,0 +1,7 @@
+---
+# handlers file for builder
+- name: Cleanup docker compose
+  docker_compose:
+    project_name: pizza-express
+    state: absent
+    project_src: "{{app_dir}}"

@@ -1,6 +1,10 @@
 ---
-- hosts: localhost
-  force_handlers: true
-  roles:
-  - builder
+- hosts: builder
+  tasks:
+  - block:
+    - include_role: 
+        name: builder
+    rescue:
+    - include_role: 
+        name: cleanup
 ...

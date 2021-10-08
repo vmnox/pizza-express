@@ -6,27 +6,29 @@
     detach: yes
     ports:
       - '127.0.0.1:6379:6379'
+  notify:
+    Cleanup containers
 
 
-- name: Run NPM install
-  command: "docker run --interactive --rm --volume {{app_dir}}:/pwd --workdir /pwd node:8.4.0 npm install"
+# Using node container during a runtime, to make sure our Env remains clean as possible
+- name: "Run NPM install (tests)"
+  command: "docker run --interactive --rm --volume {{app_dir}}:/pwd --workdir /pwd node:8.4.0-alpine npm install"
   register: _npm_install
 
 - debug:
     msg: "{{_npm_install}}"
-    verbosity: 2
   
 
-- name: Run Application tests
-  command: "docker run --interactive --network host --rm --volume {{app_dir}}:/pwd --workdir /pwd node:8.4.0 npm test"
+# Using network host in order to test the application with the Redis available on the localhost:6379
+- name: "Run Application tests (tests)"
+  command: "docker run --interactive --network host --rm --volume {{app_dir}}:/pwd --workdir /pwd node:8.4.0-alpine npm test"
   register: _npm_install
 
 - debug:
     msg: "{{_npm_install}}"
-    verbosity: 2
 
     
-- name: "Build Application container: {{app_image}}:{{app_tag}}"
+- name: "Build Application container: {{app_image}}:{{app_tag}} (build)"
   docker_image:
     build:
       path: "{{app_dir}}"
@@ -36,7 +38,7 @@
     source: build
 
   
-- name: "Starting Application container (tests): {{app_image}}:{{app_tag}}"
+- name: "Starting Application container (tests): {{app_image}}:{{app_tag}} (tests)"
   docker_container:
     name: pizza-express-fronted
     image: "{{app_image}}:{{app_tag}}"
@@ -44,21 +46,12 @@
     network_mode: host
 
 
-- name: Verify service code 200
+- name: "Verify service code 200 (tests)"
   uri:
     url: "http://localhost:8081"
 
 
-- name: Cleanup Fronted and Backend containers
-  docker_container:
-    name: "{{item}}"
-    state: absent
-  with_items:
-    - pizza-express-fronted
-    - pizza-express-backend
-
-
-- name: "Push Application with latest tag: {{app_image}}:latest"
+- name: "Push Application with latest tag: {{app_image}}:latest (build)"
   docker_image:
     name: "{{app_image}}:{{app_tag}}"
     tag: latest

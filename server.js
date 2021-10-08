@@ -6,6 +6,10 @@ const bodyParser = require('body-parser');
 
 const generateId = require('./lib/generate-id');
 
+// override redis host ?
+// var redisHost = process.env.REDIS_HOST || '127.0.0.1'
+//     client = redis.createClient({ port: '6379', host: redisHost});
+
 var redis = require("redis"),
   client = redis.createClient('6379');
 

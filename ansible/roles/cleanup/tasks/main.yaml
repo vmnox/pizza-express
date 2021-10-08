@@ -1,0 +1,9 @@
+---
+- name: "Cleanup Fronted and Backend containers (cleanup)"
+  docker_container:
+    name: "{{item}}"
+    state: absent
+  with_items:
+    - pizza-express-fronted
+    - pizza-express-backend
+...

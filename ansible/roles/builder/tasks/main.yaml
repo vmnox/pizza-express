@@ -10,18 +10,20 @@
     Cleanup containers
 
 
-# Using node container during a runtime, to make sure our Env remains clean as possible
 - name: "Run NPM install (tests)"
-  command: "docker run --interactive --rm --volume {{app_dir}}:/pwd --workdir /pwd node:8.4.0-alpine npm install"
+  command: "npm install --scripts-prepend-node-path"
+  args:
+    chdir: "{{app_dir}}"
   register: _npm_install
 
 - debug:
     msg: "{{_npm_install}}"
   
 
-# Using network host in order to test the application with the Redis available on the localhost:6379
 - name: "Run Application tests (tests)"
-  command: "docker run --interactive --network host --rm --volume {{app_dir}}:/pwd --workdir /pwd node:8.4.0-alpine npm test"
+  command: "npm test --scripts-prepend-node-path"
+  args:
+    chdir: "{{app_dir}}"
   register: _npm_install
 
 - debug:

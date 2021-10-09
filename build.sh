@@ -8,8 +8,7 @@ set -xeof pipefail
 # Prerequisites:
 # 1) docker 20.10.7
 # 2) ansible-version ~2.9.6 with Python interpreter ~3.8.10 (tested)
-# 3) password-less authentication with the builder host (localhost)
-# 4) runtime user needs to be in a docker group
+# 3) runtime user needs to be in a docker group
 
 BASEDIR="$(readlink -f $(dirname $0))"
 REGISTRY_URL="${REGISTRY_URL:-vnox91}"
